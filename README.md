@@ -41,7 +41,6 @@ Responsável por:
 ## Tecnologias Utilizadas
 
 - Python
-- Hugging Face
 - Gradio
 - APIs
 - LLM
