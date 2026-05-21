@@ -9,26 +9,35 @@ import re
 carregadores = {
     "GW-01": {
         "status": "Disponível",
-        "potencia_atual": "0 kW",
-        "energia_consumida": "0 kWh",
+        "potencia_atual": 0,
+        "limite_potencia": 22,
+        "energia_consumida": 0,
         "horario_sessao": "-",
-        "usuario_conectado": "-"
+        "usuario_conectado": "-",
+        "fonte_energia": "Solar",
+        "risco_sobrecarga": "Baixo"
     },
 
     "GW-02": {
         "status": "Em uso",
-        "potencia_atual": "22 kW",
-        "energia_consumida": "45 kWh",
+        "potencia_atual": 22,
+        "limite_potencia": 22,
+        "energia_consumida": 45,
         "horario_sessao": "18:35",
-        "usuario_conectado": "Carlos Silva"
+        "usuario_conectado": "Carlos Silva",
+        "fonte_energia": "Solar + Rede",
+        "risco_sobrecarga": "Médio"
     },
 
     "GW-03": {
         "status": "Offline",
-        "potencia_atual": "-",
-        "energia_consumida": "-",
+        "potencia_atual": 0,
+        "limite_potencia": 22,
+        "energia_consumida": 0,
         "horario_sessao": "-",
-        "usuario_conectado": "-"
+        "usuario_conectado": "-",
+        "fonte_energia": "-",
+        "risco_sobrecarga": "Indisponível"
     }
 }
 
@@ -77,6 +86,15 @@ def identificar_intencao(pergunta):
     elif "horário" in pergunta or "horario" in pergunta:
         return "horario"
 
+    elif "sobrecarga" in pergunta or "risco" in pergunta or "pico" in pergunta:
+        return "sobrecarga"
+
+    elif "fonte" in pergunta or "solar" in pergunta or "renovável" in pergunta:
+        return "fonte"
+
+    elif "recomendação" in pergunta or "recomenda" in pergunta or "melhor horário" in pergunta:
+        return "recomendacao"
+
     elif "status" in pergunta or "situação" in pergunta or "situacao" in pergunta:
         return "status"
 
@@ -92,13 +110,13 @@ def gerar_resumo(id_carregador, dados):
     status = dados["status"]
 
     if status == "Disponível":
-        return f"O carregador {id_carregador} está disponível para nova recarga."
+        return f"O carregador {id_carregador} está disponível para nova recarga. Recomenda-se priorizar seu uso para balancear a demanda."
 
     elif status == "Em uso":
-        return f"O carregador {id_carregador} está operando em {dados['potencia_atual']} para {dados['usuario_conectado']}."
+        return f"O carregador {id_carregador} está operando em {dados['potencia_atual']} kW para {dados['usuario_conectado']}. Risco de sobrecarga: {dados['risco_sobrecarga']}."
 
     elif status == "Offline":
-        return f"O carregador {id_carregador} está offline."
+        return f"O carregador {id_carregador} está offline. Recomenda-se acionar a equipe técnica para verificar comunicação, energia ou manutenção."
 
     return "Status desconhecido."
 
@@ -118,25 +136,21 @@ def chatbot(pergunta, history):
     else:
         id_encontrado = ultimo_carregador_consultado
 
-
     if not id_encontrado or id_encontrado not in carregadores:
-
-        return "Não encontrei o carregador."
-
+        return "Não encontrei o carregador. Informe um código como GW-01, GW-02 ou GW-03."
 
     dados = carregadores[id_encontrado]
 
     intencao = identificar_intencao(pergunta)
 
-
     if intencao == "usuario":
         return f"O carregador {id_encontrado} está sendo usado por {dados['usuario_conectado']}."
 
     elif intencao == "potencia":
-        return f"A potência atual é {dados['potencia_atual']}."
+        return f"A potência atual é {dados['potencia_atual']} kW."
 
     elif intencao == "energia":
-        return f"O consumo atual é {dados['energia_consumida']}."
+        return f"O consumo atual é {dados['energia_consumida']} kWh."
 
     elif intencao == "horario":
         return f"A sessão começou às {dados['horario_sessao']}."
@@ -144,6 +158,36 @@ def chatbot(pergunta, history):
     elif intencao == "status":
         return f"O status atual é {dados['status']}."
 
+    elif intencao == "sobrecarga":
+        return f"""
+Risco de sobrecarga: {dados['risco_sobrecarga']}
+
+Análise:
+A potência atual é de {dados['potencia_atual']} kW, com limite operacional de {dados['limite_potencia']} kW.
+
+Recomendação:
+Caso o risco aumente, o sistema deve reduzir a potência ou redistribuir a carga entre carregadores disponíveis.
+"""
+
+    elif intencao == "fonte":
+        return f"""
+Fonte de energia atual: {dados['fonte_energia']}
+
+Análise:
+O uso de energia solar contribui para reduzir o consumo da rede elétrica e melhora a sustentabilidade da operação.
+"""
+
+    elif intencao == "recomendacao":
+        return f"""
+Recomendação operacional:
+
+Priorizar carregadores disponíveis, evitar horários de pico e monitorar carregadores operando no limite de potência.
+
+Para este carregador:
+Status: {dados['status']}
+Potência atual: {dados['potencia_atual']} kW
+Risco de sobrecarga: {dados['risco_sobrecarga']}
+"""
 
     resumo = gerar_resumo(id_encontrado, dados)
 
@@ -152,13 +196,19 @@ Carregador: {id_encontrado}
 
 Status: {dados["status"]}
 
-Potência atual: {dados["potencia_atual"]}
+Potência atual: {dados["potencia_atual"]} kW
 
-Energia consumida: {dados["energia_consumida"]}
+Limite de potência: {dados["limite_potencia"]} kW
+
+Energia consumida: {dados["energia_consumida"]} kWh
 
 Horário: {dados["horario_sessao"]}
 
 Usuário: {dados["usuario_conectado"]}
+
+Fonte de energia: {dados["fonte_energia"]}
+
+Risco de sobrecarga: {dados["risco_sobrecarga"]}
 
 Resumo:
 {resumo}
@@ -175,13 +225,15 @@ interface = gr.ChatInterface(
     title="⚡ GoodWe ChargeOps Assistant",
 
     description="""
-Assistente inteligente para operadores comerciais.
+Assistente inteligente para operadores comerciais de eletropostos GoodWe.
 
 Capacidades:
-✅ Consultar status
-✅ Verificar potência
-✅ Consultar usuário conectado
-✅ Monitoramento operacional
+✅ Consultar status dos carregadores
+✅ Verificar potência atual
+✅ Consultar consumo energético
+✅ Identificar risco de sobrecarga
+✅ Informar fonte de energia
+✅ Gerar recomendações operacionais
 """,
 
     textbox=gr.Textbox(
@@ -194,7 +246,9 @@ Capacidades:
         "Quem está usando o GW-02?",
         "Qual a potência do carregador 2?",
         "Quanto ele consumiu?",
-        "Status do carregador 3"
+        "Existe risco de sobrecarga no GW-02?",
+        "Qual a fonte de energia do GW-01?",
+        "Qual a recomendação operacional para o GW-02?"
     ]
 )
 
