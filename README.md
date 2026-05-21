@@ -121,7 +121,7 @@ Resposta ao operador
 
 ✅ Consultar consumo energético
 
-✅ Identificar risco de sobrecarga
+✅ Informar riscos de sobrecarga com base nos dados diponíves
 
 ✅ Informar fonte de energia utilizada
 
@@ -237,7 +237,8 @@ Operador Comercial.
 - responder assuntos fora do sistema;
 - inventar informações;
 - gerar diagnósticos sem dados disponíveis;
-- fornecer respostas genéricas.
+- fornecer respostas genéricas;
+- alterar dados operacionais dos carregadores.
 
 ### Tom das respostas:
 
@@ -256,7 +257,7 @@ Operador Comercial.
 
 - Identificação de possíveis riscos de sobrecarga
 
-- Possibilidade futura de integração com energia solar real
+- Integração simulada com energia solar para apoio à eficiência energética
 
 - Sistema preparado para expansão com IA e APIs reais
 

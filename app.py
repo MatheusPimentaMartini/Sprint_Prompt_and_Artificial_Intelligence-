@@ -14,8 +14,7 @@ carregadores = {
         "energia_consumida": 0,
         "horario_sessao": "-",
         "usuario_conectado": "-",
-        "fonte_energia": "Solar",
-        "risco_sobrecarga": "Baixo"
+        "fonte_energia": "Solar"
     },
 
     "GW-02": {
@@ -25,8 +24,7 @@ carregadores = {
         "energia_consumida": 45,
         "horario_sessao": "18:35",
         "usuario_conectado": "Carlos Silva",
-        "fonte_energia": "Solar + Rede",
-        "risco_sobrecarga": "Médio"
+        "fonte_energia": "Solar + Rede"
     },
 
     "GW-03": {
@@ -36,8 +34,7 @@ carregadores = {
         "energia_consumida": 0,
         "horario_sessao": "-",
         "usuario_conectado": "-",
-        "fonte_energia": "-",
-        "risco_sobrecarga": "Indisponível"
+        "fonte_energia": "-"
     }
 }
 
@@ -102,21 +99,66 @@ def identificar_intencao(pergunta):
 
 
 # -------------------------
+# Cálculo de risco
+# -------------------------
+
+def calcular_risco_sobrecarga(dados):
+
+    if dados["status"] == "Offline":
+        return "Indisponível"
+
+    percentual_uso = (
+        dados["potencia_atual"] /
+        dados["limite_potencia"]
+    )
+
+    if percentual_uso >= 0.90:
+        return "Alto"
+
+    elif percentual_uso >= 0.60:
+        return "Médio"
+
+    return "Baixo"
+
+
+# -------------------------
 # Resumo operacional
 # -------------------------
 
 def gerar_resumo(id_carregador, dados):
 
+    risco = calcular_risco_sobrecarga(dados)
+
     status = dados["status"]
 
     if status == "Disponível":
-        return f"O carregador {id_carregador} está disponível para nova recarga. Recomenda-se priorizar seu uso para balancear a demanda."
+
+        return (
+            f"O carregador {id_carregador} "
+            f"está disponível para nova recarga. "
+            f"Recomenda-se priorizar seu uso "
+            f"para balancear a demanda."
+        )
 
     elif status == "Em uso":
-        return f"O carregador {id_carregador} está operando em {dados['potencia_atual']} kW para {dados['usuario_conectado']}. Risco de sobrecarga: {dados['risco_sobrecarga']}."
+
+        return (
+            f"O carregador {id_carregador} "
+            f"está operando em "
+            f"{dados['potencia_atual']} kW "
+            f"para {dados['usuario_conectado']}.\n"
+            f"Risco de sobrecarga: {risco}"
+        )
 
     elif status == "Offline":
-        return f"O carregador {id_carregador} está offline. Recomenda-se acionar a equipe técnica para verificar comunicação, energia ou manutenção."
+
+        return (
+            f"O carregador {id_carregador} "
+            f"está offline.\n"
+            f"Recomenda-se acionar a equipe "
+            f"técnica para verificar "
+            f"comunicação ou manutenção."
+        )
 
     return "Status desconhecido."
 
@@ -136,79 +178,149 @@ def chatbot(pergunta, history):
     else:
         id_encontrado = ultimo_carregador_consultado
 
+
     if not id_encontrado or id_encontrado not in carregadores:
-        return "Não encontrei o carregador. Informe um código como GW-01, GW-02 ou GW-03."
+
+        return (
+            "Não encontrei o carregador.\n"
+            "Informe GW-01, GW-02 ou GW-03."
+        )
+
 
     dados = carregadores[id_encontrado]
 
+    risco = calcular_risco_sobrecarga(dados)
+
     intencao = identificar_intencao(pergunta)
 
+
     if intencao == "usuario":
-        return f"O carregador {id_encontrado} está sendo usado por {dados['usuario_conectado']}."
+
+        return (
+            f"O carregador {id_encontrado} "
+            f"está sendo usado por "
+            f"{dados['usuario_conectado']}."
+        )
+
 
     elif intencao == "potencia":
-        return f"A potência atual é {dados['potencia_atual']} kW."
+
+        return (
+            f"A potência atual é "
+            f"{dados['potencia_atual']} kW."
+        )
+
 
     elif intencao == "energia":
-        return f"O consumo atual é {dados['energia_consumida']} kWh."
+
+        return (
+            f"O consumo atual é "
+            f"{dados['energia_consumida']} kWh."
+        )
+
 
     elif intencao == "horario":
-        return f"A sessão começou às {dados['horario_sessao']}."
+
+        return (
+            f"A sessão começou às "
+            f"{dados['horario_sessao']}."
+        )
+
 
     elif intencao == "status":
-        return f"O status atual é {dados['status']}."
+
+        return (
+            f"O status atual é "
+            f"{dados['status']}."
+        )
+
 
     elif intencao == "sobrecarga":
+
         return f"""
-Risco de sobrecarga: {dados['risco_sobrecarga']}
+Risco de sobrecarga: {risco}
 
 Análise:
-A potência atual é de {dados['potencia_atual']} kW, com limite operacional de {dados['limite_potencia']} kW.
+Potência atual:
+{dados['potencia_atual']} kW
+
+Limite operacional:
+{dados['limite_potencia']} kW
 
 Recomendação:
-Caso o risco aumente, o sistema deve reduzir a potência ou redistribuir a carga entre carregadores disponíveis.
+Caso o risco aumente, reduzir potência
+ou redistribuir a carga entre
+carregadores disponíveis.
 """
+
 
     elif intencao == "fonte":
+
         return f"""
-Fonte de energia atual: {dados['fonte_energia']}
+Fonte de energia atual:
+{dados['fonte_energia']}
 
 Análise:
-O uso de energia solar contribui para reduzir o consumo da rede elétrica e melhora a sustentabilidade da operação.
+A utilização de energia solar reduz
+o consumo da rede elétrica
+e aumenta a eficiência energética.
 """
 
+
     elif intencao == "recomendacao":
+
         return f"""
 Recomendação operacional:
 
-Priorizar carregadores disponíveis, evitar horários de pico e monitorar carregadores operando no limite de potência.
+• Priorizar carregadores disponíveis
 
-Para este carregador:
-Status: {dados['status']}
-Potência atual: {dados['potencia_atual']} kW
-Risco de sobrecarga: {dados['risco_sobrecarga']}
+• Evitar horários de pico
+
+• Monitorar potência utilizada
+
+Status:
+{dados['status']}
+
+Potência:
+{dados['potencia_atual']} kW
+
+Risco:
+{risco}
 """
 
-    resumo = gerar_resumo(id_encontrado, dados)
+
+    resumo = gerar_resumo(
+        id_encontrado,
+        dados
+    )
+
 
     return f"""
 Carregador: {id_encontrado}
 
-Status: {dados["status"]}
+Status:
+{dados["status"]}
 
-Potência atual: {dados["potencia_atual"]} kW
+Potência atual:
+{dados["potencia_atual"]} kW
 
-Limite de potência: {dados["limite_potencia"]} kW
+Limite:
+{dados["limite_potencia"]} kW
 
-Energia consumida: {dados["energia_consumida"]} kWh
+Energia consumida:
+{dados["energia_consumida"]} kWh
 
-Horário: {dados["horario_sessao"]}
+Horário:
+{dados["horario_sessao"]}
 
-Usuário: {dados["usuario_conectado"]}
+Usuário:
+{dados["usuario_conectado"]}
 
-Fonte de energia: {dados["fonte_energia"]}
+Fonte de energia:
+{dados["fonte_energia"]}
 
-Risco de sobrecarga: {dados["risco_sobrecarga"]}
+Risco:
+{risco}
 
 Resumo:
 {resumo}
@@ -220,19 +332,27 @@ Resumo:
 # -------------------------
 
 interface = gr.ChatInterface(
+
     fn=chatbot,
 
     title="⚡ GoodWe ChargeOps Assistant",
 
     description="""
-Assistente inteligente para operadores comerciais de eletropostos GoodWe.
+Assistente inteligente para operadores
+comerciais de eletropostos GoodWe.
 
 Capacidades:
-✅ Consultar status dos carregadores
-✅ Verificar potência atual
-✅ Consultar consumo energético
+
+✅ Consultar status
+
+✅ Verificar potência
+
+✅ Consultar consumo
+
 ✅ Identificar risco de sobrecarga
+
 ✅ Informar fonte de energia
+
 ✅ Gerar recomendações operacionais
 """,
 
@@ -242,12 +362,19 @@ Capacidades:
     ),
 
     examples=[
+
         "Qual o status do GW-02?",
+
         "Quem está usando o GW-02?",
+
         "Qual a potência do carregador 2?",
+
         "Quanto ele consumiu?",
+
         "Existe risco de sobrecarga no GW-02?",
+
         "Qual a fonte de energia do GW-01?",
+
         "Qual a recomendação operacional para o GW-02?"
     ]
 )
