@@ -38,28 +38,30 @@ Responsável por:
 
 ---
 
-## Tecnologias Utilizadas
+## Tecnologias utilizadas
 
 - Python
 - Gradio
-- APIs
-- LLM
+- Regex (re)
+- Ambiente Virtual (.venv)
 
 ---
 
 ## Arquitetura
 
 Operador Comercial
-↓
+    ↓
 Interface Gradio
-↓
+    ↓
 Python
-↓
-API dos carregadores
-↓
-LLM
-↓
-Resposta do chatbot
+    ↓
+Extração de entidade (Regex)
+    ↓
+Identificação de intenção
+    ↓
+Memória simples
+    ↓
+Resposta operacional
 
 ---
 
