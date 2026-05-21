@@ -1,0 +1,24 @@
+SPRINT PROMPT AND ARTIFICIAL INTELLIGENCE
+GoodWe ChargeOps Assistant
+
+Integrantes:
+
+Leonardo Soares Rodrigues - RM: 572986
+Matheus Pimenta - RM: 569400
+Rubens Henrique - RM: 572667
+Guilherme Cedro - RM: 571050
+Gabriel Carvalho - RM: 571381
+
+Repositório GitHub:
+
+https://github.com/MatheusPimentaMartini/Sprint_Prompt_and_Artificial_Intelligence-.git
+
+
+O repositório contém:
+
+- README completo
+- Código-fonte (app.py)
+- Fluxograma do sistema
+- Modelo de teste
+- System Prompt
+- Documentação da solução
