@@ -12,7 +12,7 @@ O chatbot atua como uma interface inteligente entre operadores e o sistema de ge
 
 ---
 
-## Problema
+# Problema
 
 Em eletropostos comerciais com múltiplos veículos conectados simultaneamente, a ausência de gerenciamento inteligente dificulta o controle da distribuição de potência, aumenta riscos de sobrecarga elétrica e reduz a eficiência energética da operação.
 
@@ -20,7 +20,7 @@ Além disso, operadores possuem dificuldade em monitorar consumo, utilização d
 
 ---
 
-## Objetivo
+# Objetivo
 
 Criar um chatbot inteligente para operadores comerciais capaz de:
 
@@ -33,7 +33,7 @@ Criar um chatbot inteligente para operadores comerciais capaz de:
 
 ---
 
-## Sustentabilidade
+# Sustentabilidade
 
 Nossa solução está alinhada aos objetivos do EV Challenge GoodWe:
 
@@ -45,26 +45,26 @@ Nossa solução está alinhada aos objetivos do EV Challenge GoodWe:
 
 ### Impactos esperados
 
-**Ambiental**
+### Ambiental
 
 - Redução do desperdício energético
 - Uso mais eficiente dos recursos energéticos
 
-**Tecnológico**
+### Tecnológico
 
 - Maior automação operacional
 - Melhor monitoramento em tempo real
 
-**Econômico**
+### Econômico
 
 - Redução de custos operacionais
 - Maior eficiência no gerenciamento dos carregadores
 
 ---
 
-## Persona
+# Persona
 
-### Operador Comercial
+## Operador Comercial
 
 Responsável por:
 
@@ -75,7 +75,7 @@ Responsável por:
 
 ---
 
-## Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 - Python
 - Gradio
@@ -87,7 +87,124 @@ Responsável por:
 
 ---
 
-## Arquitetura do Sistema
+# Como executar o projeto
+
+## Pré-requisitos
+
+Antes de iniciar, instale:
+
+- Python 3.10 ou superior
+- Git
+
+Verificar versões:
+
+```bash
+python --version
+```
+
+```bash
+git --version
+```
+
+---
+
+## 1 Clonar repositório
+
+```bash
+git clone https://github.com/seu-usuario/Sprint_Prompt_and_Artificial_Intelligence.git
+```
+
+Entrar na pasta:
+
+```bash
+cd Sprint_Prompt_and_Artificial_Intelligence
+```
+
+---
+
+## 2 Criar ambiente virtual
+
+Criar ambiente:
+
+```bash
+python -m venv .venv
+```
+
+---
+
+## 3 Ativar ambiente virtual
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux/Mac
+
+```bash
+source .venv/bin/activate
+```
+
+Após ativar aparecerá algo parecido com:
+
+```bash
+(.venv)
+```
+
+---
+
+## 4 Instalar dependências
+
+Instalar bibliotecas:
+
+```bash
+pip install -r requirements.txt
+```
+
+Caso ainda não exista arquivo requirements:
+
+```bash
+pip install gradio
+```
+
+---
+
+## 5 Executar chatbot
+
+Executar:
+
+```bash
+python app.py
+```
+
+ou:
+
+```bash
+python main.py
+```
+
+---
+
+## 6 Acessar interface
+
+Após executar, o terminal mostrará algo parecido:
+
+```bash
+Running on local URL:
+
+http://127.0.0.1:7860
+```
+
+Abra no navegador:
+
+```text
+http://127.0.0.1:7860
+```
+
+---
+
+# Arquitetura do Sistema
 
 ```text
 Operador Comercial
@@ -113,7 +230,7 @@ Resposta ao operador
 
 ---
 
-## Funcionalidades
+# Funcionalidades
 
 ✅ Consultar status dos carregadores
 
@@ -121,7 +238,7 @@ Resposta ao operador
 
 ✅ Consultar consumo energético
 
-✅ Informar riscos de sobrecarga com base nos dados diponíves
+✅ Informar riscos de sobrecarga
 
 ✅ Informar fonte de energia utilizada
 
@@ -133,7 +250,7 @@ Resposta ao operador
 
 ---
 
-## Dados utilizados via API simulada
+# Dados utilizados via API simulada
 
 - id_carregador
 - status
@@ -147,81 +264,96 @@ Resposta ao operador
 
 ---
 
-## Modelo de Teste
+# Modelo de Teste
 
-### Pergunta:
+### Pergunta
 
+```text
 Qual o status do GW-02?
+```
 
-**Resposta esperada:**
+Resposta esperada:
 
+```text
 Status atual: Em uso.
+```
 
----
+### Pergunta
 
-### Pergunta:
-
+```text
 Quem está usando o GW-02?
+```
 
-**Resposta esperada:**
+Resposta esperada:
 
+```text
 Carlos Silva.
+```
 
----
+### Pergunta
 
-### Pergunta:
-
+```text
 Quanto o GW-02 consumiu?
+```
 
-**Resposta esperada:**
+Resposta esperada:
 
+```text
 45 kWh.
+```
 
----
+### Pergunta
 
-### Pergunta:
-
+```text
 Existe risco de sobrecarga no GW-02?
+```
 
-**Resposta esperada:**
+Resposta esperada:
 
+```text
 Risco de sobrecarga: Médio.
+```
 
----
+### Pergunta
 
-### Pergunta:
-
+```text
 Qual a fonte de energia do GW-01?
+```
 
-**Resposta esperada:**
+Resposta esperada:
 
+```text
 Fonte atual: Solar.
+```
 
 ---
 
-### Pergunta:
+# Estrutura do Projeto
 
-Qual recomendação operacional para GW-02?
+```text
+Sprint_Prompt_and_Artificial_Intelligence/
 
-**Resposta esperada:**
-
-Priorizar carregadores disponíveis e monitorar a potência utilizada.
+│── app.py
+│── requirements.txt
+│── README.md
+│── .venv
+```
 
 ---
 
-## System Prompt
+# System Prompt
 
 Você é o GoodWe ChargeOps Assistant.
 
-### Contexto
+Contexto:
 
 Você trabalha em um sistema inteligente de recarga de veículos elétricos da GoodWe para ambientes comerciais.
 
-### Persona atendida
+Persona atendida:
 
 Operador Comercial.
 
-### Você deve:
+Você deve:
 
 - informar status dos carregadores;
 - mostrar potência atual;
@@ -232,50 +364,42 @@ Operador Comercial.
 - sugerir recomendações preventivas;
 - responder utilizando linguagem técnica e objetiva.
 
-### Você NÃO deve:
+Você NÃO deve:
 
 - responder assuntos fora do sistema;
 - inventar informações;
 - gerar diagnósticos sem dados disponíveis;
-- fornecer respostas genéricas;
-- alterar dados operacionais dos carregadores.
-
-### Tom das respostas:
-
-- objetivo;
-- técnico;
-- claro;
-- português brasileiro.
+- alterar dados operacionais.
 
 ---
 
-## Diferenciais da Solução
+# Diferenciais da Solução
 
-- Utilização de linguagem natural para interação com operadores
+- Utilização de linguagem natural
 
 - Monitoramento inteligente dos carregadores
 
-- Identificação de possíveis riscos de sobrecarga
+- Identificação de riscos de sobrecarga
 
-- Integração simulada com energia solar para apoio à eficiência energética
+- Integração simulada com energia solar
 
-- Sistema preparado para expansão com IA e APIs reais
+- Sistema preparado para expansão com IA
 
 - Memória simples para continuidade da conversa
 
 ---
 
-## Conclusão
+# Conclusão
 
-O GoodWe ChargeOps Assistant foi desenvolvido como uma interface inteligente entre operadores comerciais e sistemas de recarga de veículos elétricos.
+O GoodWe ChargeOps Assistant foi desenvolvido como uma interface inteligente entre operadores comerciais e sistemas de recarga elétrica.
 
-A solução busca melhorar o monitoramento operacional, reduzir desperdícios energéticos e apoiar decisões relacionadas ao gerenciamento inteligente de potência, alinhando-se aos objetivos do EV Challenge GoodWe 2026.
+A solução busca melhorar o monitoramento operacional, reduzir desperdícios energéticos e apoiar decisões relacionadas ao gerenciamento inteligente de potência, alinhando-se aos objetivos do GoodWe EV Challenge 2026.
 
 ---
 
-## Integrantes
+# Integrantes
 
-Leonardo Soares Rodrigues — RM: 572986
+Leonardo Soares Rodrigues — RM: 572986 
 
 Matheus Pimenta — RM: 569400
 
@@ -285,4 +409,4 @@ Guilherme Cedro — RM: 571050
 
 Gabriel Carvalho — RM: 571381
 
-Eduardo - RM 572514
+Eduardo — RM: 572514
